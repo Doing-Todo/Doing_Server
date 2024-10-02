@@ -90,7 +90,7 @@ jobs:
         if: contains(github.ref, 'main')
         with:
           host: ${{ secrets.HOST_PROD }}
-          username: ubuntu
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
@@ -114,6 +114,6 @@ jobs:
           script: |
             sudo docker ps
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/agaproject
-            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}/agaproject
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/app
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}/app
             sudo docker image prune -f
