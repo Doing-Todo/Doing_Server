@@ -1,4 +1,4 @@
-package org.skhu.doing.dto.request;
+package org.skhu.doing.chat.dto;
 
 public class ChatroomRequestDTO {
 }

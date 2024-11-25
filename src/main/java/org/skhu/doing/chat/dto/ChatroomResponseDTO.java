@@ -1,4 +1,4 @@
-package org.skhu.doing.dto.response;
+package org.skhu.doing.chat.dto;
 
 public class ChatroomResponseDTO {
 }
