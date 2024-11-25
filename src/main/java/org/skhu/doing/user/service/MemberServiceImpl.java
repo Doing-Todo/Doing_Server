@@ -1,7 +1,6 @@
 package org.skhu.doing.user.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import lombok.Value;
 import org.skhu.doing.entity.Member;
 import org.skhu.doing.memo.dto.MemoResponseDTO;
 import org.skhu.doing.memo.repository.MemoRepository;
@@ -9,15 +8,8 @@ import org.skhu.doing.todo.dto.TodoResponseDTO;
 import org.skhu.doing.todo.repository.TodoRepository;
 import org.skhu.doing.user.MemberDTO;
 import org.skhu.doing.user.repository.MemberRepository;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
