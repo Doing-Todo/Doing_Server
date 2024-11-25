@@ -1,6 +1,7 @@
 package org.skhu.doing.user.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.Value;
 import org.skhu.doing.entity.Member;
 import org.skhu.doing.memo.dto.MemoResponseDTO;
 import org.skhu.doing.memo.repository.MemoRepository;
@@ -8,12 +9,17 @@ import org.skhu.doing.todo.dto.TodoResponseDTO;
 import org.skhu.doing.todo.repository.TodoRepository;
 import org.skhu.doing.user.MemberDTO;
 import org.skhu.doing.user.repository.MemberRepository;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,20 +34,16 @@ public class MemberServiceImpl implements MemberService {
         this.todoRepository = todoRepository;
     }
     @Override
-    public Member kakaoLogin(OAuth2AuthenticationToken authenticationToken) {
-        // OAuth2User에서 사용자 정보 추출
+    public MemberDTO findOrRegisterMember(OAuth2AuthenticationToken authenticationToken) {
+        // OAuth2 인증된 사용자 정보 가져오기
         Map<String, Object> attributes = authenticationToken.getPrincipal().getAttributes();
+
         Long kakaoMemberId = Long.valueOf(attributes.get("id").toString());
+        String email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
+        String nickname = (String) ((Map<String, Object>) attributes.get("properties")).get("nickname");
 
-        // kakao_account와 properties는 Map 형태이므로 캐스팅 필요
-        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
-
-        String email = (String) kakaoAccount.get("email");
-        String nickname = (String) properties.get("nickname");
-
-        // 기존 회원 조회
-        return memberRepository.findByKakaoMember(kakaoMemberId)
+        // Find or create member
+        Member member = memberRepository.findByKakaoMember(kakaoMemberId)
                 .orElseGet(() -> {
                     Member newMember = new Member();
                     newMember.setKakaoMember(kakaoMemberId);
@@ -49,6 +51,17 @@ public class MemberServiceImpl implements MemberService {
                     newMember.setNickname(nickname);
                     return memberRepository.save(newMember);
                 });
+
+        // Update email and nickname if changed
+        if (email != null && !email.equals(member.getEmail())) {
+            member.setEmail(email);
+        }
+        if (nickname != null && !nickname.equals(member.getNickname())) {
+            member.setNickname(nickname);
+        }
+        memberRepository.save(member);
+
+        return MemberDTO.fromEntity(member);
     }
 
     @Override

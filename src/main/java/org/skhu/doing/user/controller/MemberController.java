@@ -37,9 +37,8 @@ public class MemberController {
     })
     @GetMapping
     public ResponseEntity<MemberDTO> kakaoLogin(OAuth2AuthenticationToken authenticationToken) {
-        Member member = memberService.kakaoLogin(authenticationToken);
-        MemberDTO response = MemberDTO.fromEntity(member);
-        return ResponseEntity.ok(response);
+        MemberDTO memberDTO = memberService.findOrRegisterMember(authenticationToken);
+        return ResponseEntity.ok(memberDTO);
     }
 
     @Operation(summary = "마이페이지 조회", description = "회원의 마이페이지 정보를 조회합니다.")

@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import java.util.List;
 
 public interface MemberService {
-    Member kakaoLogin(OAuth2AuthenticationToken authenticationToken);
+    MemberDTO findOrRegisterMember(OAuth2AuthenticationToken authenticationToken);
     MemberDTO getMemberProfile(Long memberId);
     void deleteMember(Long memberId);
     List<MemoResponseDTO> getMemosByMember(String email);
