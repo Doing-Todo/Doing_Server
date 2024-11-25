@@ -1,6 +1,6 @@
 package org.skhu.doing.service;
 
-import org.skhu.doing.entity.Note;
+import org.skhu.doing.entity.Memo;
 import org.skhu.doing.repository.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,26 +18,26 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public Note createNote(Note note) {
-        return noteRepository.save(note);
+    public Memo createNote(Memo memo) {
+        return noteRepository.save(memo);
     }
 
     @Override
-    public Note getNoteById(Long id) {
+    public Memo getNoteById(Long id) {
         return noteRepository.findById(id).orElseThrow(() -> new RuntimeException("Note not found"));
     }
 
     @Override
-    public List<Note> getNotesByFolderId(Long folderId) {
+    public List<Memo> getNotesByFolderId(Long folderId) {
         return noteRepository.findByFolderId(folderId);
     }
 
     @Override
-    public Note updateNote(Long id, Note updatedNote) {
-        Note existingNote = getNoteById(id);
-        existingNote.setTitle(updatedNote.getTitle());
-        existingNote.setContent(updatedNote.getContent());
-        return noteRepository.save(existingNote);
+    public Memo updateNote(Long id, Memo updatedMemo) {
+        Memo existingMemo = getNoteById(id);
+        existingMemo.setTitle(updatedMemo.getTitle());
+        existingMemo.setContent(updatedMemo.getContent());
+        return noteRepository.save(existingMemo);
     }
 
     @Override

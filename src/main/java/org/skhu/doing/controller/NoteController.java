@@ -1,6 +1,6 @@
 package org.skhu.doing.controller;
 
-import org.skhu.doing.entity.Note;
+import org.skhu.doing.entity.Memo;
 import org.skhu.doing.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,27 +21,27 @@ public class NoteController {
     }
 
     @PostMapping
-    public ResponseEntity<Note> createNote(@RequestBody Note note) {
-        Note createdNote = noteService.createNote(note);
-        return new ResponseEntity<>(createdNote, HttpStatus.CREATED);
+    public ResponseEntity<Memo> createNote(@RequestBody Memo memo) {
+        Memo createdMemo = noteService.createNote(memo);
+        return new ResponseEntity<>(createdMemo, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Note> getNoteById(@PathVariable Long id) {
-        Note note = noteService.getNoteById(id);
-        return new ResponseEntity<>(note, HttpStatus.OK);
+    public ResponseEntity<Memo> getNoteById(@PathVariable Long id) {
+        Memo memo = noteService.getNoteById(id);
+        return new ResponseEntity<>(memo, HttpStatus.OK);
     }
 
     @GetMapping("/folder/{folderId}")
-    public ResponseEntity<List<Note>> getNotesByFolderId(@PathVariable Long folderId) {
-        List<Note> notes = noteService.getNotesByFolderId(folderId);
-        return new ResponseEntity<>(notes, HttpStatus.OK);
+    public ResponseEntity<List<Memo>> getNotesByFolderId(@PathVariable Long folderId) {
+        List<Memo> memos = noteService.getNotesByFolderId(folderId);
+        return new ResponseEntity<>(memos, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Note> updateNote(@PathVariable Long id, @RequestBody Note note) {
-        Note updatedNote = noteService.updateNote(id, note);
-        return new ResponseEntity<>(updatedNote, HttpStatus.OK);
+    public ResponseEntity<Memo> updateNote(@PathVariable Long id, @RequestBody Memo memo) {
+        Memo updatedMemo = noteService.updateNote(id, memo);
+        return new ResponseEntity<>(updatedMemo, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
