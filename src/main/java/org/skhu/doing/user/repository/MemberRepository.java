@@ -1,4 +1,4 @@
-package org.skhu.doing.repository;
+package org.skhu.doing.user.repository;
 
 import org.skhu.doing.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
