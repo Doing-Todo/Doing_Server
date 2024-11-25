@@ -24,8 +24,13 @@ public class MemberServiceImpl implements MemberService {
         // OAuth2User에서 사용자 정보 추출
         Map<String, Object> attributes = authenticationToken.getPrincipal().getAttributes();
         Long kakaoMemberId = Long.valueOf(attributes.get("id").toString());
-        String email = (String) attributes.get("kakao_account").get("email");
-        String nickname = (String) attributes.get("properties").get("nickname");
+
+        // kakao_account와 properties는 Map 형태이므로 캐스팅 필요
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> properties = (Map<String, Object>) attributes.get("properties");
+
+        String email = (String) kakaoAccount.get("email");
+        String nickname = (String) properties.get("nickname");
 
         // 기존 회원 조회
         Optional<Member> existingMember = memberRepository.findByKakaoMember(kakaoMemberId);
