@@ -23,11 +23,11 @@ public class Todo {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Status status;
 
-    @Column(name = "folder_id", nullable = false)
-    private Long folderId;
+    @ManyToOne
+    @JoinColumn(name = "folder_id", nullable = false)
+    private Folder folder;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -36,11 +36,13 @@ public class Todo {
     private LocalDateTime updatedAt;
 
     @PreUpdate
-    public void preUpdate() {
+    public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
 
     public enum Status {
-        PENDING, IN_PROGRESS, COMPLETED
+        TODO,
+        DOING,
+        DONE
     }
 }

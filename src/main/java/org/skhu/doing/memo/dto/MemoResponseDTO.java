@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.skhu.doing.entity.Memo;
+import org.skhu.doing.entity.Folder;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ public class MemoResponseDTO {
     private String content;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
-    private Long folderId;
+    private Folder folder;  // Folder 객체로 변경
 
     public static MemoResponseDTO fromEntity(Memo memo) {
         return new MemoResponseDTO(
@@ -26,7 +27,7 @@ public class MemoResponseDTO {
                 memo.getContent(),
                 memo.getCreateDate(),
                 memo.getLastUpdateDate(),
-                memo.getFolderId()
+                memo.getFolder()
         );
     }
 }
