@@ -33,14 +33,14 @@ public class MemberServiceImpl implements MemberService {
         String nickname = (String) properties.get("nickname");
 
         // 기존 회원 조회
-        Optional<Member> existingMember = memberRepository.findByKakaoMember(kakaoMemberId);
-        if (existingMember.isPresent()) {
-            return existingMember.get(); // 기존 회원 반환
-        }
-
-        // 신규 회원 생성 및 저장
-        Member newMember = new Member(kakaoMemberId, email, nickname);
-        return memberRepository.save(newMember);
+        return memberRepository.findByKakaoMember(kakaoMemberId)
+                .orElseGet(() -> {
+                    Member newMember = new Member();
+                    newMember.setKakaoMember(kakaoMemberId);
+                    newMember.setEmail(email);
+                    newMember.setNickname(nickname);
+                    return memberRepository.save(newMember);
+                });
     }
 
     @Override
@@ -52,12 +52,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMember(Long memberId) {
-        Optional<Member> member = memberRepository.findByKakaoMember(memberId);
-        if (member.isPresent()) {
-            memberRepository.delete(member.get());
-        } else {
-            throw new IllegalArgumentException("해당 회원을 찾을 수 없습니다. ID: " + memberId);
-        }
+        Member member = memberRepository.findByKakaoMember(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID: " + memberId));
+        memberRepository.delete(member);
     }
 
 //    @Override

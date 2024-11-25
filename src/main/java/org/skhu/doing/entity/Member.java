@@ -1,14 +1,15 @@
 package org.skhu.doing.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 public class Member {
 
@@ -25,10 +26,7 @@ public class Member {
     @Column(length = 100)
     private String nickname;
 
-    public Member(Long kakaoMember, String email, String nickname) {
-        this.kakaoMember = kakaoMember;
-        this.email = email;
-        this.nickname = nickname;
-    }
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberFolder> memberFolders = new ArrayList<>();
 }
 
