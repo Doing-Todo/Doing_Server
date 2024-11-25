@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Folder")
 @Getter @Setter
@@ -18,6 +21,12 @@ public class Folder {
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(name = "member_id", nullable = false)
-    private Long memberId;
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberFolder> memberFolders = new ArrayList<>(); // Association with MemberFolder
+
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Memo> memos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Todo> todos = new ArrayList<>();
 }

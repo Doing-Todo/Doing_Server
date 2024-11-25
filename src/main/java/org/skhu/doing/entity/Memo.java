@@ -29,11 +29,12 @@ public class Memo {
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
-    @Column(name = "folder_id", nullable = false)
-    private Long folderId;
+    @ManyToOne
+    @JoinColumn(name = "folder_id", nullable = false)
+    private Folder folder;
 
     @PreUpdate
-    public void preUpdate() {
+    public void onUpdate() {
         this.lastUpdateDate = LocalDateTime.now();
     }
 }

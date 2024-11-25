@@ -37,7 +37,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // Find or create Member
         Member member = memberRepository.findByKakaoMember(kakaoMember)
-                .orElseGet(() -> memberRepository.save(new Member(kakaoMember, email, nickname)));
+                .orElseGet(() -> {
+                    Member newMember = new Member();
+                    newMember.setKakaoMember(kakaoMember);
+                    newMember.setEmail(email);
+                    newMember.setNickname(nickname);
+                    return memberRepository.save(newMember);
+                });
 
 
         if (member.getEmail() == null || !member.getEmail().equals(email)) {
