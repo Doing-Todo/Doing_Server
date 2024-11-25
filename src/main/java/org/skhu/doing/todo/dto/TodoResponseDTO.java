@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.skhu.doing.entity.Folder;
 import org.skhu.doing.entity.Todo;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public class TodoResponseDTO {
     private Long id;
     private String description;
     private Todo.Status status;
-    private Long folderId;
+    private Folder folder;  // Folder 객체로 변경
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -24,10 +25,9 @@ public class TodoResponseDTO {
                 todo.getId(),
                 todo.getDescription(),
                 todo.getStatus(),
-                todo.getFolderId(),
+                todo.getFolder(),
                 todo.getCreatedAt(),
                 todo.getUpdatedAt()
         );
     }
 }
-
