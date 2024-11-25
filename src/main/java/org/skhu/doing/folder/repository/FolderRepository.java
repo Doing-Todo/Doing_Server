@@ -1,6 +1,7 @@
 package org.skhu.doing.folder.repository;
 
 import org.skhu.doing.entity.Folder;
+import org.skhu.doing.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

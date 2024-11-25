@@ -1,5 +1,6 @@
 package org.skhu.doing.memo.repository;
 
+import org.skhu.doing.entity.Folder;
 import org.skhu.doing.entity.Member;
 import org.skhu.doing.entity.Memo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface MemoRepository extends JpaRepository<Memo, Long> {
-    List<Memo> findByMember(Member member);
+    List<Memo> findByFolder(Folder folder);
 }
