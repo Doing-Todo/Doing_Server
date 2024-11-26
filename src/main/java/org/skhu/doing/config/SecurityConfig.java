@@ -36,7 +36,8 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
                     .requestMatchers("/api/oauth/kakao/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    .anyRequest().authenticated()
+//                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
             );
         http.oauth2Login(oauth2 -> oauth2
                     .loginPage("/api/oauth/kakao")                     // 카카오 OAuth2 로그인 엔드포인트
