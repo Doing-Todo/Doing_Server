@@ -9,6 +9,7 @@ import org.skhu.doing.memo.dto.MemoResponseDTO;
 import org.skhu.doing.todo.dto.TodoResponseDTO;
 import org.skhu.doing.user.MemberDTO;
 import org.skhu.doing.user.service.MemberService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,6 +40,18 @@ public class MemberController {
     public ResponseEntity<MemberDTO> kakaoLogin(OAuth2AuthenticationToken authenticationToken) {
         MemberDTO memberDTO = memberService.findOrRegisterMember(authenticationToken);
         return ResponseEntity.ok(memberDTO);
+    }
+
+    // 로그인 성공 시 처리
+    @GetMapping("/success")
+    public ResponseEntity<String> loginSuccess() {
+        return ResponseEntity.ok("로그인 성공");
+    }
+
+    // 로그인 실패 시 처리
+    @GetMapping("/failure")
+    public ResponseEntity<String> loginFailure() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패");
     }
 
     @Operation(summary = "마이페이지 조회", description = "회원의 마이페이지 정보를 조회합니다.")
