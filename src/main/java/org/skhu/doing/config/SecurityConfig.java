@@ -1,5 +1,6 @@
 package org.skhu.doing.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.skhu.doing.user.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
 import java.io.PrintWriter;
@@ -33,11 +35,10 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/api/oauth/kakao/**", "/api/oauth/kakao/success", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("/api/oauth/kakao/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             );
         http.oauth2Login(oauth2 -> oauth2
-//                    .loginPage("/login")
                     .loginPage("/api/oauth/kakao")                     // 카카오 OAuth2 로그인 엔드포인트
                     .defaultSuccessUrl("/api/oauth/kakao/success")    // 로그인 성공 시 리디렉션 경로
                     .failureUrl("/api/oauth/kakao/failure")           // 로그인 실패 시 리디렉션 경로
@@ -65,5 +66,13 @@ public class SecurityConfig {
             writer.println(body);
             writer.flush();
         });
+    }
+
+    @Bean
+    public AuthenticationFailureHandler failureHandler() {
+        return (request, response, exception) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Authentication failed: " + exception.getMessage());
+        };
     }
 }
