@@ -33,7 +33,7 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/api/oauth/**", "/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    .requestMatchers("/api/oauth/kakao/**", "/api/oauth/kakao/success", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             );
         http.oauth2Login(oauth2 -> oauth2
