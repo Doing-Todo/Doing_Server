@@ -1,7 +1,11 @@
 package org.skhu.doing.user.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.skhu.doing.entity.Folder;
 import org.skhu.doing.entity.Member;
+import org.skhu.doing.entity.Memo;
+import org.skhu.doing.entity.Todo;
+import org.skhu.doing.folder.repository.FolderRepository;
 import org.skhu.doing.memo.dto.MemoResponseDTO;
 import org.skhu.doing.memo.repository.MemoRepository;
 import org.skhu.doing.todo.dto.TodoResponseDTO;
@@ -12,18 +16,21 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
-    private final MemoRepository memoRepository;
+    private final FolderRepository folderRepository;
     private final TodoRepository todoRepository;
+    private final MemoRepository memoRepository;
 
-    public MemberServiceImpl(MemberRepository memberRepository, MemoRepository memoRepository, TodoRepository todoRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, FolderRepository folderRepository, TodoRepository todoRepository, MemoRepository memoRepository) {
         this.memberRepository = memberRepository;
-        this.memoRepository = memoRepository;
+        this.folderRepository = folderRepository;
         this.todoRepository = todoRepository;
+        this.memoRepository = memoRepository;
     }
     @Override
     public MemberDTO findOrRegisterMember(OAuth2AuthenticationToken authenticationToken) {
@@ -69,24 +76,32 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID: " + memberId));
         memberRepository.delete(member);
     }
-    @Override
-    public List<MemoResponseDTO> getMemosByMember(String email) {
+
+    private <T> List<T> getItemsByMember(String email, Function<Folder, List<T>> repositoryMethod) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. email: " + email));
 
-        return memoRepository.findByMember(member).stream()
-                .map(MemoResponseDTO::fromEntity)
+        // Member ID로 Folder를 조회
+        List<Folder> folders = folderRepository.findByMemberId(member.getId());
+
+        // Folder별로 repositoryMethod를 실행하여 메모 또는 투두를 찾음
+        return folders.stream()
+                .flatMap(folder -> repositoryMethod.apply(folder).stream())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<TodoResponseDTO> getTodosByMember(String email) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. email: " + email));
+    public List<MemoResponseDTO> getMemosByMember(String email) {
+        return getItemsByMember(email, folder -> memoRepository.findByFolder(folder).stream()
+                .map(MemoResponseDTO::fromEntity)
+                .collect(Collectors.toList()));
+    }
 
-        return todoRepository.findByMember(member).stream()
+    @Override
+    public List<TodoResponseDTO> getTodosByMember(String email) {
+        return getItemsByMember(email, folder -> todoRepository.findByFolder(folder).stream()
                 .map(TodoResponseDTO::fromEntity)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
 //    @Override
