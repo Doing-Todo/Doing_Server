@@ -1,5 +1,7 @@
 package org.skhu.doing.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.skhu.doing.user.service.CustomOAuth2UserService;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +15,17 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,24 +41,56 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/api/oauth/kakao/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-//                    .anyRequest().authenticated()
-                    .anyRequest().permitAll()
-            );
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests((auth) -> auth
+                                .requestMatchers("/api/oauth/kakao/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
+                )
+                // 커스텀 필터 추가
+                .addFilterBefore(new UpgradeRequestFilter(), UsernamePasswordAuthenticationFilter.class);
         http.oauth2Login(oauth2 -> oauth2
-                    .loginPage("/api/oauth/kakao")                     // 카카오 OAuth2 로그인 엔드포인트
-                    .defaultSuccessUrl("/api/oauth/kakao/success")    // 로그인 성공 시 리디렉션 경로
-                    .failureUrl("/api/oauth/kakao/failure")           // 로그인 실패 시 리디렉션 경로
-                    .userInfoEndpoint(userInfo -> userInfo
-                            .userService(oAuth2UserService)       // 사용자 정보 서비스 설정
-                    )
-                );
+                .loginPage("/api/oauth/kakao")                     // 카카오 OAuth2 로그인 엔드포인트
+                .defaultSuccessUrl("/api/oauth/kakao/success")    // 로그인 성공 시 리디렉션 경로
+                .failureUrl("/api/oauth/kakao/failure")           // 로그인 실패 시 리디렉션 경로
+                .userInfoEndpoint(userInfo -> userInfo
+                        .userService(oAuth2UserService)       // 사용자 정보 서비스 설정
+                )
+        );
         return http.build();
+    }
+
+    // Upgrade-Insecure-Requests 헤더를 비활성화하는 필터
+    public class UpgradeRequestFilter implements Filter {
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+
+            if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+                HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+                // "Upgrade-Insecure-Requests" 헤더를 무시
+                if (httpRequest.getHeader("Upgrade-Insecure-Requests") != null) {
+                    httpRequest = new HttpServletRequestWrapper(httpRequest) {
+                        @Override
+                        public String getHeader(String name) {
+                            if ("Upgrade-Insecure-Requests".equalsIgnoreCase(name)) {
+                                return null; // 헤더 무시
+                            }
+                            return super.getHeader(name);
+                        }
+                    };
+                }
+
+                chain.doFilter(httpRequest, response);
+            } else {
+                chain.doFilter(request, response); // HttpServletRequest가 아닐 경우 그대로 진행
+            }
+        }
     }
 
     @Bean
