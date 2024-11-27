@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-    @GetMapping("hello-spring")
+    @GetMapping("/hello-spring")
     public ResponseEntity<String> helloString(@RequestParam("name") String name) {
         String message = "hello " + name;
         return ResponseEntity.ok(message);
     }
 
-    @GetMapping("hello-api")
+    @GetMapping("/hello-api")
     public ResponseEntity<Hello> helloApi(@RequestParam("name") String name) {
         Hello hello = new Hello();
         hello.setName(name);
