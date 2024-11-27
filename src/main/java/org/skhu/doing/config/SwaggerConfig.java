@@ -26,7 +26,7 @@ public class SwaggerConfig {
         localServer.setDescription("Local server");
 
         Server productionServer = new Server(); // 운영 서버 설정(https)
-        productionServer.setUrl(productionServerUrl);
+        productionServer.setUrl("http://ec2-3-36-52-28.ap-northeast-2.compute.amazonaws.com:80");
         productionServer.setDescription("Production server");
 
         Info info = new Info()
