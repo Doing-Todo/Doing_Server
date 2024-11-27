@@ -1,24 +1,24 @@
 package org.skhu.doing;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class HelloController {
     @GetMapping("hello-spring")
-    @ResponseBody
-    public String helloString(@RequestParam("name") String name){
-        return "hello" + name;
+    public ResponseEntity<String> helloString(@RequestParam("name") String name) {
+        String message = "hello " + name;
+        return ResponseEntity.ok(message);
     }
 
     @GetMapping("hello-api")
-    @ResponseBody
-    public Hello helloApi(@RequestParam("name") String name){
+    public ResponseEntity<Hello> helloApi(@RequestParam("name") String name) {
         Hello hello = new Hello();
         hello.setName(name);
-        return hello;
+        return ResponseEntity.ok(hello);
     }
 
     class Hello{
