@@ -31,16 +31,16 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 기능입니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 성공"),
-            @ApiResponse(responseCode = "401", description = "인증 실패")
-    })
-    @GetMapping
-    public ResponseEntity<MemberDTO> kakaoLogin(OAuth2AuthenticationToken authenticationToken) {
-        MemberDTO memberDTO = memberService.findOrRegisterMember(authenticationToken);
-        return ResponseEntity.ok(memberDTO);
-    }
+//    @Operation(summary = "카카오 소셜 로그인", description = "카카오 소셜 로그인 기능입니다.")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+//            @ApiResponse(responseCode = "401", description = "인증 실패")
+//    })
+//    @GetMapping
+//    public ResponseEntity<MemberDTO> kakaoLogin(OAuth2AuthenticationToken authenticationToken) {
+//        MemberDTO memberDTO = memberService.findOrRegisterMember(authenticationToken);
+//        return ResponseEntity.ok(memberDTO);
+//    }
 
     // 로그인 성공 시 처리
     @GetMapping("/success")
