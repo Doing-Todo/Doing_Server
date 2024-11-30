@@ -14,11 +14,11 @@ import java.util.List;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 추가
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Long kakaoMember;
+    private Long kakaomember;
 
     @Column(length = 255)
     private String email;
@@ -29,4 +29,3 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberFolder> memberFolders = new ArrayList<>();
 }
-

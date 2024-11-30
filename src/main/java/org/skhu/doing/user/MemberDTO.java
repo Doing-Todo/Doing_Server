@@ -13,7 +13,7 @@ public class MemberDTO {
     public static MemberDTO fromEntity(Member member) {
         MemberDTO dto = new MemberDTO();
         dto.setId(member.getId());
-        dto.setKakaoMember(member.getKakaoMember());
+        dto.setKakaoMember(member.getKakaomember());
         dto.setEmail(member.getEmail());
         dto.setNickname(member.getNickname());
         return dto;

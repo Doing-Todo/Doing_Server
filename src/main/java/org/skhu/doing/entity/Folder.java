@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "Folder")
+@Table(name = "folder")
 @Getter @Setter
 @NoArgsConstructor
 public class Folder {
@@ -22,7 +22,7 @@ public class Folder {
     private String name;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MemberFolder> memberFolders = new ArrayList<>(); // Association with MemberFolder
+    private List<MemberFolder> memberFolders = new ArrayList<>();
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Memo> memos = new ArrayList<>();

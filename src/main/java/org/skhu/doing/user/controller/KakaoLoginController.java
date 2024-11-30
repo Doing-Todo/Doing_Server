@@ -22,16 +22,6 @@ public class KakaoLoginController {
     private final KakaoService kakaoService;
     private final MemberService memberService;
 
-//    @GetMapping("api/oauth/kakao")
-//    public ResponseEntity<?> callback(@RequestParam("code") String code) {
-//        String accessToken = kakaoService.getAccessTokenFromKakao(code);
-//
-//        KakaoUserInfoResponseDto userInfo = kakaoService.getUserInfo(accessToken);
-//
-//        // User 로그인, 또는 회원가입 로직 추가
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
-
     @GetMapping("api/oauth/kakao")
     public ResponseEntity<?> callback(@RequestParam("code") String code) {
         // Access Token 가져오기

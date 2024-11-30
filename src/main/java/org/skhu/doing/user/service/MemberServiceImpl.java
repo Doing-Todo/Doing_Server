@@ -38,10 +38,11 @@ public class MemberServiceImpl implements MemberService {
         String nickname = userInfo.getKakaoAccount().getProfile().getNickName();
 
         // 회원 정보 저장 또는 업데이트
-        Member member = memberRepository.findByKakaoMember(kakaoMemberId)
+        Member member = memberRepository.findByKakaomember(kakaoMemberId)
                 .orElseGet(() -> {
                     Member newMember = new Member();
-                    newMember.setKakaoMember(kakaoMemberId);
+                    newMember.setId(Math.abs(UUID.randomUUID().getMostSignificantBits()));
+                    newMember.setKakaomember(kakaoMemberId);
                     newMember.setEmail(email);
                     newMember.setNickname(nickname);
                     return memberRepository.save(newMember);
