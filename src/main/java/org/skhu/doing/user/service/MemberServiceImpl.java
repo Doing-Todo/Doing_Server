@@ -3,16 +3,14 @@ package org.skhu.doing.user.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.skhu.doing.entity.Folder;
 import org.skhu.doing.entity.Member;
-import org.skhu.doing.entity.Memo;
-import org.skhu.doing.entity.Todo;
 import org.skhu.doing.folder.repository.FolderRepository;
 import org.skhu.doing.memo.dto.MemoResponseDTO;
 import org.skhu.doing.memo.repository.MemoRepository;
 import org.skhu.doing.todo.dto.TodoResponseDTO;
 import org.skhu.doing.todo.repository.TodoRepository;
+import org.skhu.doing.user.KakaoUserInfoResponseDto;
 import org.skhu.doing.user.MemberDTO;
 import org.skhu.doing.user.repository.MemberRepository;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,16 +30,14 @@ public class MemberServiceImpl implements MemberService {
         this.todoRepository = todoRepository;
         this.memoRepository = memoRepository;
     }
+
     @Override
-    public MemberDTO findOrRegisterMember(OAuth2AuthenticationToken authenticationToken) {
-        // OAuth2 인증된 사용자 정보 가져오기
-        Map<String, Object> attributes = authenticationToken.getPrincipal().getAttributes();
+    public MemberDTO findOrRegisterMember(KakaoUserInfoResponseDto userInfo) {
+        Long kakaoMemberId = userInfo.getId();
+        String email = userInfo.getKakaoAccount().getEmail();
+        String nickname = userInfo.getKakaoAccount().getProfile().getNickName();
 
-        Long kakaoMemberId = Long.valueOf(attributes.get("id").toString());
-        String email = (String) ((Map<String, Object>) attributes.get("kakao_account")).get("email");
-        String nickname = (String) ((Map<String, Object>) attributes.get("properties")).get("nickname");
-
-        // Find or create member
+        // 회원 정보 저장 또는 업데이트
         Member member = memberRepository.findByKakaoMember(kakaoMemberId)
                 .orElseGet(() -> {
                     Member newMember = new Member();
@@ -51,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
                     return memberRepository.save(newMember);
                 });
 
-        // Update email and nickname if changed
+        // 이메일과 닉네임 업데이트
         if (email != null && !email.equals(member.getEmail())) {
             member.setEmail(email);
         }
@@ -66,14 +62,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberDTO getMemberProfile(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID: " + memberId));
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다. ID: " + memberId));
         return MemberDTO.fromEntity(member);
     }
 
     @Override
     public void deleteMember(Long memberId) {
-        Member member = memberRepository.findByKakaoMember(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다. ID: " + memberId));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다. ID: " + memberId));
         memberRepository.delete(member);
     }
 
