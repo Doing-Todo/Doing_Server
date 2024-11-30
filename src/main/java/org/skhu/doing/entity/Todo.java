@@ -41,8 +41,6 @@ public class Todo {
     }
 
     public enum Status {
-        TODO,
-        DOING,
-        DONE
+        pending, inProgress, completed
     }
 }
